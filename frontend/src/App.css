@@ -489,39 +489,14 @@ html, body {
   }
 }
 
-/* Authentication background image styling */
+/* Authentication page container styling */
 .auth-page-container {
   min-height: 100vh;
   position: relative;
-  background-image: url('./assets/auth_background.png') !important;
-  background-size: cover !important;
-  background-position: center !important;
-  background-repeat: no-repeat !important;
   overflow: hidden;
-}
-
-/* Translucent premium glass overlay to ensure 100% legibility */
-.auth-page-container::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(13, 11, 24, 0.45); /* Soft dark-tint glass filter */
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  z-index: 1;
-}
-
-[data-bs-theme="light"] .auth-page-container::before {
-  background: rgba(255, 255, 255, 0.35); /* Translucent soft light filter for light mode */
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
 }
 
 .auth-page-content {
   position: relative;
-  z-index: 2; /* Position forms above the background image overlay */
   width: 100%;
 }
