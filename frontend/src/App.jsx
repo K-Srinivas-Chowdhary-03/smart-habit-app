@@ -6,10 +6,10 @@ import axios from 'axios';
 export const AuthContext = createContext(null);
 
 // Configure axios base URL dynamically for easy deployment
-export const API_URL = import.meta.env.VITE_API_URL || 'https://smart-habit-app.onrender.com/api';
+export const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000/api' : 'https://smart-habit-app.onrender.com/api');
 axios.defaults.baseURL = import.meta.env.VITE_API_URL 
   ? import.meta.env.VITE_API_URL.replace(/\/api$/, '') 
-  : 'https://smart-habit-app.onrender.com';
+  : (import.meta.env.DEV ? 'http://localhost:5000' : 'https://smart-habit-app.onrender.com');
 
 // Custom Route Guard for Protected Pages
 const ProtectedRoute = ({ children }) => {

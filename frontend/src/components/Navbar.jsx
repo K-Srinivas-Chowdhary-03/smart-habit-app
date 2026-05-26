@@ -28,10 +28,8 @@ export default function Navbar() {
       if (collapseEl && collapseEl.classList.contains('show')) {
         const toggler = document.querySelector('.navbar-toggler');
         if (toggler && !toggler.contains(e.target)) {
-          // Close if click is outside the nav or if it's on a nav-link or logout button
+          // Only close if click is strictly outside the entire navigation element
           if (navRef.current && !navRef.current.contains(e.target)) {
-            toggler.click();
-          } else if (e.target.closest('.nav-link') || e.target.closest('.btn-outline-danger')) {
             toggler.click();
           }
         }
@@ -46,8 +44,31 @@ export default function Navbar() {
     };
   }, []);
 
+  // Auto-collapse navbar on route change
+  useEffect(() => {
+    const collapseEl = document.getElementById('navbarNav');
+    if (collapseEl && collapseEl.classList.contains('show')) {
+      const toggler = document.querySelector('.navbar-toggler');
+      if (toggler) {
+        toggler.click();
+      }
+    }
+  }, [location.pathname]);
+
   const toggleTheme = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  };
+
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+    // Auto-collapse navbar when showing the logout dialog on mobile
+    const collapseEl = document.getElementById('navbarNav');
+    if (collapseEl && collapseEl.classList.contains('show')) {
+      const toggler = document.querySelector('.navbar-toggler');
+      if (toggler) {
+        toggler.click();
+      }
+    }
   };
 
   const handleConfirmLogout = () => {
@@ -139,7 +160,7 @@ export default function Navbar() {
             <button
               className="btn btn-outline-danger d-flex align-items-center justify-content-center rounded-circle border-0"
               style={{ width: '40px', height: '40px', padding: 0 }}
-              onClick={() => setShowLogoutModal(true)}
+              onClick={handleLogoutClick}
               title="Logout"
             >
               <i className="bi bi-box-arrow-right fs-5"></i>

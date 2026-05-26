@@ -182,13 +182,14 @@ router.get('/user/:userId', protect, async (req, res) => {
       
       // Keep track of database logs to avoid adding virtual logs for days already recorded
       const dbDates = challengeLogs.map(l => l.date.toISOString().split('T')[0]);
+      const dbDatesSet = new Set(dbDates);
 
       // Push existing database logs
       challengeLogs.forEach(l => injectedLogs.push(l));
 
       // Inject virtual "Missed" logs for unlogged past days
       dateList.forEach((dateStr) => {
-        if (!dbDates.includes(dateStr) && dateStr !== today.toISOString().split('T')[0]) {
+        if (!dbDatesSet.has(dateStr) && dateStr !== today.toISOString().split('T')[0]) {
           injectedLogs.push({
             _id: `virtual-${challenge._id}-${dateStr}`,
             userId: user._id,

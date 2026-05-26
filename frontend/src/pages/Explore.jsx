@@ -122,10 +122,6 @@ export default function Explore() {
   const categories = ['All', 'Coding', 'Fitness', 'Reading', 'Meditation'];
 
   const filteredChallenges = challenges.filter((c) => {
-    // Only show challenges created by the currently logged-in user
-    const isCreatedByMe = c.creator && (c.creator._id === user?._id || c.creator === user?._id);
-    if (!isCreatedByMe) return false;
-
     const matchesCategory = selectedCategory === 'All' || c.category === selectedCategory;
     const matchesSearch = c.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           c.description.toLowerCase().includes(searchQuery.toLowerCase());
