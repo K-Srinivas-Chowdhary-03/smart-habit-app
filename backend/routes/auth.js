@@ -4,9 +4,9 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { protect } = require('../middleware/auth');
 
-// Helper to generate JWT token
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET || 'supersecretkeyformyhabitplatform123!', {
+// Helper to generate JWT token bound to client IP address
+const generateToken = (id, ip) => {
+  return jwt.sign({ id, ip }, process.env.JWT_SECRET || 'supersecretkeyformyhabitplatform123!', {
     expiresIn: '30d'
   });
 };
@@ -25,6 +25,9 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'User already exists with this email' });
     }
 
+    // Capture client IP address
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+
     // Create user
     const user = await User.create({
       name,
@@ -40,7 +43,7 @@ router.post('/register', async (req, res) => {
         points: user.points,
         joinedChallenges: user.joinedChallenges,
         friends: user.friends,
-        token: generateToken(user._id)
+        token: generateToken(user._id, ip)
       });
     } else {
       res.status(400).json({ message: 'Invalid user data provided' });
@@ -63,6 +66,9 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({ email: normalizedEmail });
 
     if (user && (await user.matchPassword(password))) {
+      // Capture client IP address
+      const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+
       res.json({
         _id: user._id,
         name: user.name,
@@ -70,7 +76,7 @@ router.post('/login', async (req, res) => {
         points: user.points,
         joinedChallenges: user.joinedChallenges,
         friends: user.friends,
-        token: generateToken(user._id)
+        token: generateToken(user._id, ip)
       });
     } else {
       res.status(401).json({ message: 'Invalid email or password' });

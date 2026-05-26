@@ -16,6 +16,13 @@ const protect = async (req, res, next) => {
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'supersecretkeyformyhabitplatform123!');
 
+      // Verify client IP address to prevent session hijacking or token sharing
+      const currentIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+      if (decoded.ip && decoded.ip !== currentIp) {
+        console.warn(`Auth blocked: IP address mismatch. Token IP: ${decoded.ip}, Current IP: ${currentIp}`);
+        return res.status(401).json({ message: 'Not authorized, IP address mismatch' });
+      }
+
       // Get user from database (exclude password) and attach to request
       req.user = await User.findById(decoded.id).select('-password');
       

@@ -57,7 +57,12 @@ import './App.css';
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [token, setToken] = useState(() => {
+    const sessionTok = sessionStorage.getItem('token');
+    // Clear legacy localStorage token to migrate old installations cleanly to secure sessions
+    localStorage.removeItem('token');
+    return sessionTok;
+  });
   const [loading, setLoading] = useState(true);
 
   // Set up interceptor to automatically attach authorization header
@@ -100,13 +105,13 @@ export default function App() {
   }, [token]);
 
   const login = (userData) => {
-    localStorage.setItem('token', userData.token);
+    sessionStorage.setItem('token', userData.token);
     setToken(userData.token);
     setUser(userData);
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     setToken(null);
     setUser(null);
   };
